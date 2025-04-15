@@ -86,7 +86,7 @@ class _YouTubeSummarizerState extends State<YouTubeSummarizer> {
     // 광고 표시 전에 API 호출을 비동기적으로 시작
     //_showInterstitialAd();  // 로딩 시작되면 광고를 표시합니다.
 
-    final uri = Uri.parse('http://localhost:8000/summarize-youtube');
+    final uri = Uri.parse('https://youtube-summary-grsg.onrender.com/summarize-youtube');
     final response = await http.post(
       uri,
       headers: {'Content-Type': 'application/json'},

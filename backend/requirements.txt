@@ -4,3 +4,4 @@ uvicorn
 httpx
 python-dotenv
 youtube-transcript-api
+gunicorn
