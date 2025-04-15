@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_html/flutter_html.dart';  // HTML 렌더링 패키지
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'dart:html' as html; // HTML 관련 기능을 사용하기 위해 추가
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -123,11 +125,28 @@ class _YouTubeSummarizerState extends State<YouTubeSummarizer> {
     // 여기서 `Locale`에 의존하는 작업을 하지 마세요
   }
 
+  void checkBrowserAndSetLanguage() {
+    if (kIsWeb) {
+      // 웹에서 실행 중일 때
+      String browser = html.window.navigator.userAgent;
+      if (browser.contains("Chrome")) {
+        // 크롬에서 실행 중인 경우
+        print("This is Chrome browser.");
+        // 여기에서 언어를 `ko`로 강제로 설정하거나 다른 작업을 할 수 있습니다.
+      } else {
+        print("This is not Chrome.");
+      }
+    } else {
+      // 이제 여기서 Locale이나 다른 상속된 위젯을 안전하게 사용할 수 있습니다.
+      _languageCode = Localizations.localeOf(context).languageCode;
+    }
+  }
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // 이제 여기서 Locale이나 다른 상속된 위젯을 안전하게 사용할 수 있습니다.
-    _languageCode = Localizations.localeOf(context).languageCode;
+    checkBrowserAndSetLanguage();
+
   }
 
   @override

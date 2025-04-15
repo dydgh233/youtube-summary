@@ -27,7 +27,7 @@ app.add_middleware(
 
 class YoutubeRequest(BaseModel):
     videoUrl: str
-
+    languageCode: str
 def extract_video_id(url: str) -> str:
     import re
     match = re.search(r"(?:v=|youtu\.be/)([a-zA-Z0-9_-]{11})", url)
