@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_html/flutter_html.dart';  // HTML 렌더링 패키지
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'dart:html' as html; // HTML 관련 기능을 사용하기 위해 추가
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  MobileAds.instance.initialize();  // 광고 초기화
   runApp(const MyApp());
 }
 
@@ -46,33 +42,6 @@ class _YouTubeSummarizerState extends State<YouTubeSummarizer> {
   final TextEditingController _controller = TextEditingController();
   String _summary = '';
   bool _isLoading = false;
-  InterstitialAd? _interstitialAd;  // 전면 광고 객체
-  String _languageCode = '';
-
-  // 광고 로드 메서드
-  // void _loadInterstitialAd() {
-  //   InterstitialAd.load(
-  //     adUnitId: 'YOUR_ADMOB_INTERSTITIAL_AD_UNIT_ID',  // 여기에 실제 AdMob 광고 ID를 넣으세요.
-  //     request: AdRequest(),
-  //     adLoadCallback: InterstitialAdLoadCallback(
-  //       onAdLoaded: (InterstitialAd ad) {
-  //         _interstitialAd = ad;  // 광고가 준비되면 객체에 저장
-  //       },
-  //       onAdFailedToLoad: (LoadAdError error) {
-  //         print('전면 광고 로드 실패: $error');
-  //       },
-  //     ),
-  //   );
-  // }
-
-  // 광고를 보여주는 메서드
-  // void _showInterstitialAd() {
-  //   if (_interstitialAd != null) {
-  //     _interstitialAd!.show();
-  //   } else {
-  //     print('전면 광고가 준비되지 않았습니다.');
-  //   }
-  // }
 
   Future<void> summarizeVideo() async {
     final videoUrl = _controller.text.trim();
@@ -83,16 +52,11 @@ class _YouTubeSummarizerState extends State<YouTubeSummarizer> {
       _summary = '';
     });
 
-    //_loadInterstitialAd();  // 광고 로드
-
-    // 광고 표시 전에 API 호출을 비동기적으로 시작
-    //_showInterstitialAd();  // 로딩 시작되면 광고를 표시합니다.
-
-    final uri = Uri.parse('https://youtube-summary-grsg.onrender.com/summarize-youtube');
+    final uri = Uri.parse('http://localhost:8000/summarize-youtube');
     final response = await http.post(
       uri,
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'videoUrl': videoUrl, 'languageCode': _languageCode}),
+      body: jsonEncode({'videoUrl': videoUrl}),
     );
 
     if (response.statusCode == 200) {
@@ -114,38 +78,17 @@ class _YouTubeSummarizerState extends State<YouTubeSummarizer> {
 
   @override
   void dispose() {
-    // 전면 광고 객체 해제
-    _interstitialAd?.dispose();
     super.dispose();
   }
 
   @override
   void initState() {
     super.initState();
-    // 여기서 `Locale`에 의존하는 작업을 하지 마세요
-  }
-
-  void checkBrowserAndSetLanguage() {
-    if (kIsWeb) {
-      // 웹에서 실행 중일 때
-      String browser = html.window.navigator.userAgent;
-      if (browser.contains("Chrome")) {
-        // 크롬에서 실행 중인 경우
-        print("This is Chrome browser.");
-        // 여기에서 언어를 `ko`로 강제로 설정하거나 다른 작업을 할 수 있습니다.
-      } else {
-        print("This is not Chrome.");
-      }
-    } else {
-      // 이제 여기서 Locale이나 다른 상속된 위젯을 안전하게 사용할 수 있습니다.
-      _languageCode = Localizations.localeOf(context).languageCode;
-    }
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    checkBrowserAndSetLanguage();
 
   }
 
